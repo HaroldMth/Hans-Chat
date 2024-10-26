@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Futuriste</title>
+    <title> Hans Chat </title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -75,6 +75,9 @@
         }
 
         .message {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin: 5px 0;
             padding: 10px;
             border-radius: 10px;
@@ -92,6 +95,21 @@
             background-color: #2196F3;
             color: white;
             align-self: flex-start;
+        }
+
+        /* Delete button for admins */
+        .delete-btn {
+            background: transparent;
+            border: none;
+            color: #FF4081;
+            font-size: 14px;
+            cursor: pointer;
+            display: none;
+        }
+
+        /* Display delete button for admin users */
+        .admin .delete-btn {
+            display: inline;
         }
 
         /* Text input & button */
@@ -156,6 +174,9 @@
         function showChatScreen() {
             document.getElementById("loginScreen").style.display = "none";
             document.getElementById("chatScreen").style.display = "flex";
+            if (isAdmin) {
+                document.getElementById("chatScreen").classList.add("admin");
+            }
         }
 
         function login() {
@@ -178,11 +199,25 @@
             if (messageInput.value.trim() !== "") {
                 const message = document.createElement("div");
                 message.classList.add("message", "message-a");
+
+                // Add delete button if admin
+                if (isAdmin) {
+                    const deleteBtn = document.createElement("button");
+                    deleteBtn.classList.add("delete-btn");
+                    deleteBtn.textContent = "Supprimer";
+                    deleteBtn.onclick = () => deleteMessage(message);
+                    message.appendChild(deleteBtn);
+                }
+
                 message.textContent = `${username}: ${messageInput.value}`;
                 messagesContainer.appendChild(message);
                 messageInput.value = "";
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }
+        }
+
+        function deleteMessage(messageElement) {
+            messageElement.remove();
         }
 
         document.addEventListener('DOMContentLoaded', () => {

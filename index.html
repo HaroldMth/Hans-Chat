@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hans Chat</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        /* Importer la police moderne depuis Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: url('thumb.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #ffffff;
+            overflow: hidden;
+            filter: brightness(0.8); /* Assombrir l'arrière-plan */
+        }
+
+        /* Écran de connexion */
+        #loginScreen {
+            width: 360px;
+            background: rgba(10, 10, 10, 0.8);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.7);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid rgba(0, 255, 255, 0.5); /* Bordure futuriste */
+        }
+
+        #loginScreen:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 50px rgba(0, 255, 255, 1);
+        }
+
+        /* Boîte de chat */
+        #chatScreen {
+            width: 100%;
+            height: 100vh;
+            background: rgba(10, 10, 10, 0.8);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.7);
+            display: none;
+            flex-direction: column;
+            border: 2px solid rgba(0, 255, 255, 0.5); /* Bordure futuriste */
+        }
+
+        /* Logo */
+        .logo {
+            width: 150px; /* Taille du logo augmentée */
+            margin-bottom: 20px;
+        }
+
+        /* Zone de messages */
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 10px;
+            animation: fadeIn 0.3s ease;
+            max-width: 70%;
+            word-wrap: break-word;
+            position: relative;
+        }
+
+        .message-a {
+            background-color: rgba(76, 175, 80, 0.9);
+            color: white;
+            align-self: flex-end;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 1); /* Glow effect */
+        }
+
+        .message-b {
+            background-color: rgba(33, 150, 243, 0.9);
+            color: white;
+            align-self: flex-start;
+            box-shadow: 0 0 10px rgba(33, 150, 243, 1); /* Glow effect */
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            background: rgba(255, 255, 255, 0.5);
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.7); /* Glow effect on focus */
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: #FF4081;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+            position: relative;
+            overflow: hidden; /* Pour effet de lueur */
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transition: transform 0.5s ease;
+            transform: translate(-50%, -50%) scale(0);
+            z-index: 0;
+        }
+
+        button:hover::before {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        button:hover {
+            background: #FF80AB;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="loginScreen">
+        <img src="logo.png" alt="Logo" class="logo"> <!-- Logo sur l'écran de connexion -->
+        <h2>Connexion</h2>
+        <input type="text" id="usernameInput" placeholder="Nom d'utilisateur" required>
+        <input type="password" id="passwordInput" placeholder="Mot de passe" required>
+        <button onclick="login()">Se connecter</button>
+    </div>
+    
+    <div id="chatScreen">
+        <img src="logo.png" alt="Logo" class="logo"> <!-- Logo sur l'écran de chat -->
+        <h2>Chat</h2>
+        <div id="messages"></div>
+        <input type="text" id="messageInput" placeholder="Votre message..." required>
+        <button onclick="sendMessage()">Envoyer</button>
+    </div>
+
+    <script>
+        let username = "";
+        const password = "secret"; // Le mot de passe à utiliser pour rejoindre le chat
+
+        // Fonction pour afficher l'écran de chat
+        function showChatScreen() {
+            document.getElementById("loginScreen").style.display = "none";
+            document.getElementById("chatScreen").style.display = "flex"; // Changer à "flex"
+        }
+
+        // Fonction pour gérer la connexion
+        function login() {
+            const inputPassword = document.getElementById("passwordInput").value;
+            username = document.getElementById("usernameInput").value.trim();
+
+            if (inputPassword === password && username) {
+                localStorage.setItem('username', username); // Stocker le nom d'utilisateur
+                showChatScreen();
+            } else {
+                alert("Mot de passe incorrect ou nom d'utilisateur manquant !");
+            }
+        }
+
+        // Fonction pour envoyer un message
+        function sendMessage() {
+            const messageInput = document.getElementById("messageInput");
+            const messagesContainer = document.getElementById("messages");
+
+            if (messageInput.value.trim() !== "") {
+                const message = document.createElement("div");
+                message.classList.add("message", "message-a"); // Message envoyé
+                message.textContent = `${username}: ${messageInput.value}`;
+                messagesContainer.appendChild(message);
+                messageInput.value = "";
+                messagesContainer.scrollTop = messagesContainer.scrollHeight; // Faire défiler vers le bas
+            }
+        }
+
+        // Charger le nom d'utilisateur stocké
+        document.addEventListener('DOMContentLoaded', () => {
+            const storedUsername = localStorage.getItem('username');
+            if (storedUsername) {
+                username = storedUsername;
+                document.getElementById("usernameInput").value = username;
+            }
+        });
+    </script>
+</body>
+</html>

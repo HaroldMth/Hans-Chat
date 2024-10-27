@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Hans Chat </title>
-    <link rel="icon" type="image/png" href="favicon.jpg">
+    <title>Chat Futuriste</title>
+    <link rel="icon" href="thumbnail.png" type="image/png"> <!-- Thumbnail for the web page -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@300;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        /* Universal Teko Font */
+        /* Importer la police moderne depuis Google Fonts */
         body {
             font-family: 'Teko', sans-serif;
             display: flex;
@@ -17,19 +17,20 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background: url('thumb.jpg') center/cover no-repeat;
+            background: url('thumb.jpg') no-repeat center center fixed;
+            background-size: cover;
             color: #ffffff;
-            overflow: hidden;
+            overflow: hidden; /* Empêche le défilement */
         }
 
-        /* Login Screen Styling */
+        /* Écran de connexion */
         #loginScreen {
-            width: 380px;
-            background: rgba(0, 0, 0, 0.6);
+            width: 360px;
+            background: rgba(0, 0, 0, 0.7);
             border-radius: 20px;
             padding: 40px;
             text-align: center;
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(15px);
             box-shadow: 0 10px 50px rgba(0, 255, 255, 0.5);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
@@ -39,99 +40,83 @@
             box-shadow: 0 20px 70px rgba(0, 255, 255, 0.7);
         }
 
-        /* Logo styling */
-        .logo {
-            max-width: 150px;
-            margin-bottom: 20px;
-            transition: transform 0.3s ease;
-        }
-        .logo:hover {
-            transform: scale(1.05);
-        }
-
-        /* Chat Screen */
+        /* Boîte de chat */
         #chatScreen {
             width: 100%;
-            height: 100vh;
+            height: 100vh; /* Remplit toute la hauteur */
             background: rgba(0, 0, 0, 0.7);
             border-radius: 20px;
             padding: 20px;
             text-align: center;
-            display: none;
-            flex-direction: column;
-            color: #e0f7fa;
-            position: relative;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 10px 50px rgba(0, 255, 255, 0.5);
+            display: none; /* Caché par défaut */
+            flex-direction: column; /* Aligne le contenu verticalement */
         }
 
-        /* Messages container */
+        /* Zone de messages */
         #messages {
-            flex: 1;
-            overflow-y: auto;
+            flex: 1; /* Prend tout l'espace disponible */
+            overflow-y: auto; /* Défilement vertical */
             padding: 10px;
             border-radius: 10px;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.1);
             display: flex;
-            flex-direction: column;
+            flex-direction: column; /* Aligne les messages verticalement */
         }
 
         .message {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             margin: 5px 0;
             padding: 10px;
             border-radius: 10px;
-            max-width: 70%;
-            word-wrap: break-word;
+            animation: fadeIn 0.3s ease;
+            max-width: 70%; /* Limite la largeur des messages */
+            word-wrap: break-word; /* Permet le retour à la ligne */
         }
 
         .message-a {
             background-color: #4CAF50;
             color: white;
-            align-self: flex-end;
+            align-self: flex-end; /* Aligner à droite */
         }
 
         .message-b {
             background-color: #2196F3;
             color: white;
-            align-self: flex-start;
+            align-self: flex-start; /* Aligné à gauche */
         }
 
-        /* Delete button for admins */
-        .delete-btn {
-            background: transparent;
-            border: none;
-            color: #FF4081;
-            font-size: 14px;
-            cursor: pointer;
-            display: none;
+        /* Animation des messages */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        /* Display delete button for admin users */
-        .admin .delete-btn {
-            display: inline;
-        }
-
-        /* Text input & button */
         input[type="text"], input[type="password"] {
             width: 100%;
-            padding: 15px;
+            padding: 10px;
             margin: 10px 0;
             border: none;
             border-radius: 5px;
             background: rgba(255, 255, 255, 0.3);
             color: white;
-            font-size: 18px;
+            font-size: 16px;
         }
 
         button {
             width: 100%;
-            padding: 15px;
+            padding: 10px;
             border: none;
             border-radius: 5px;
             background: #FF4081;
             color: white;
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
             transition: background 0.3s ease;
         }
@@ -139,94 +124,106 @@
         button:hover {
             background: #FF80AB;
         }
-
-        h2 {
-            font-size: 2.5rem;
-            color: #00e5ff;
-            margin: 10px 0;
-        }
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
     <div id="loginScreen">
-        <img src="logo.png" alt="Logo" class="logo">
+        <img src="logo.png" alt="Logo" style="width: 120px; margin-bottom: 20px;"> <!-- Logo on login -->
         <h2>Connexion</h2>
         <input type="text" id="usernameInput" placeholder="Nom d'utilisateur" required>
         <input type="password" id="passwordInput" placeholder="Mot de passe" required>
         <button onclick="login()">Se connecter</button>
     </div>
     
-    <!-- Chat Screen -->
     <div id="chatScreen">
-        <img src="logo.png" alt="Logo" class="logo">
+        <img src="logo.png" alt="Logo" style="width: 120px; margin-bottom: 20px;"> <!-- Logo on chat screen -->
+        <h2>Chat</h2>
         <div id="messages"></div>
         <input type="text" id="messageInput" placeholder="Votre message..." required>
         <button onclick="sendMessage()">Envoyer</button>
     </div>
 
-    <script>
+    <!-- Import Firebase SDKs -->
+    <script type="module">
+        // Import the necessary functions from Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+        // Firebase configuration (use your actual credentials)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDTwvjiDl8GrEG3wMctvFHKofkI_ayNcKw",
+            authDomain: "hans-f2fb2.firebaseapp.com",
+            databaseURL: "https://hans-f2fb2-default-rtdb.firebaseio.com",
+            projectId: "hans-f2fb2",
+            storageBucket: "hans-f2fb2.appspot.com",
+            messagingSenderId: "537361201560",
+            appId: "1:537361201560:web:b598028148f09152de93ed",
+            measurementId: "G-1LFJV84MCK"
+        };
+
+        // Initialize Firebase and Firestore
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Global variable for username
         let username = "";
-        const password = "secret"; // Basic user password
-        const adminPassword = "adminSecret"; // Special password for admins
-        let isAdmin = false; // Track if user is an admin
 
-        function showChatScreen() {
-            document.getElementById("loginScreen").style.display = "none";
-            document.getElementById("chatScreen").style.display = "flex";
-            if (isAdmin) {
-                document.getElementById("chatScreen").classList.add("admin");
-            }
-        }
-
+        // Log in to the chat
         function login() {
             const inputPassword = document.getElementById("passwordInput").value;
             username = document.getElementById("usernameInput").value.trim();
 
-            if ((inputPassword === password || inputPassword === adminPassword) && username) {
-                isAdmin = inputPassword === adminPassword; // Set admin status
-                localStorage.setItem('username', username);
+            // Example password check, replace as needed
+            const correctPassword = "secret"; // Replace with your actual password
+
+            if (inputPassword === correctPassword && username) {
                 showChatScreen();
             } else {
                 alert("Mot de passe incorrect ou nom d'utilisateur manquant !");
             }
         }
 
-        function sendMessage() {
+        // Show chat screen function
+        function showChatScreen() {
+            document.getElementById("loginScreen").style.display = "none";
+            document.getElementById("chatScreen").style.display = "flex";
+            listenForMessages();
+        }
+
+        // Send a message
+        async function sendMessage() {
             const messageInput = document.getElementById("messageInput");
-            const messagesContainer = document.getElementById("messages");
 
             if (messageInput.value.trim() !== "") {
-                const message = document.createElement("div");
-                message.classList.add("message", "message-a");
-
-                // Add delete button if admin
-                if (isAdmin) {
-                    const deleteBtn = document.createElement("button");
-                    deleteBtn.classList.add("delete-btn");
-                    deleteBtn.textContent = "Supprimer";
-                    deleteBtn.onclick = () => deleteMessage(message);
-                    message.appendChild(deleteBtn);
+                try {
+                    await addDoc(collection(db, "messages"), {
+                        sender: username,
+                        text: messageInput.value,
+                        timestamp: new Date()
+                    });
+                    messageInput.value = ""; // Clear input after sending
+                } catch (error) {
+                    console.error("Error adding message: ", error);
                 }
-
-                message.textContent = `${username}: ${messageInput.value}`;
-                messagesContainer.appendChild(message);
-                messageInput.value = "";
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }
         }
 
-        function deleteMessage(messageElement) {
-            messageElement.remove();
-        }
+        // Listen for new messages
+        function listenForMessages() {
+            const messagesContainer = document.getElementById("messages");
+            const q = query(collection(db, "messages"), orderBy("timestamp"));
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const storedUsername = localStorage.getItem('username');
-            if (storedUsername) {
-                username = storedUsername;
-                document.getElementById("usernameInput").value = username;
-            }
-        });
+            onSnapshot(q, (querySnapshot) => {
+                messagesContainer.innerHTML = ""; // Clear messages to prevent duplicates
+                querySnapshot.forEach((doc) => {
+                    const messageData = doc.data();
+                    const message = document.createElement("div");
+                    message.classList.add("message", messageData.sender === username ? "message-a" : "message-b");
+                    message.textContent = `${messageData.sender}: ${messageData.text}`;
+                    messagesContainer.appendChild(message);
+                });
+            });
+        }
     </script>
 </body>
 </html>
